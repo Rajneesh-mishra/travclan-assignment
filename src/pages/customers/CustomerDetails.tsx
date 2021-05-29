@@ -86,7 +86,7 @@ const CustomerDetails: React.FC<Props> = ({ history }) => {
                 day: "2-digit",
               });
               return (
-                <Grid item md={3} key={bids.id}>
+                <Grid item md={3} xs={6} key={bids.id}>
                   <Card className={classes.card}>
                     <CardContent>
                       <Typography gutterBottom variant="h5" component="h2">

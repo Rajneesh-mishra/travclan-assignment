@@ -80,7 +80,7 @@ const ListCustomers: React.FC<Props> = ({ history }) => {
 
   return (
     <Paper className={classes.root}>
-      <Backdrop open={true}>
+      <Backdrop open={rows.length > 0 ? false : true}>
         <CircularProgress color="inherit" />
       </Backdrop>
       <div>
