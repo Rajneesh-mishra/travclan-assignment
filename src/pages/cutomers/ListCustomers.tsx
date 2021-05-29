@@ -9,6 +9,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import { createListData } from "./customerListHelper";
+import { FormControlLabel, Switch } from "@material-ui/core";
 
 interface Column {
   id: "name" | "email" | "phone" | "hasPremium" | "bidAmount";
@@ -29,21 +30,26 @@ const useStyles = makeStyles({
     width: "100%",
   },
   container: {
-    maxHeight: 440,
+    maxHeight: "89vh",
   },
 });
 
 export default function ListCustomers() {
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState<any>([]);
+  const [toggle, setToggle] = useState<boolean>(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const toggleBidAmount = () => {
+    setRows(createListData(rows, !toggle));
+    setToggle((prev) => !prev);
+  };
   const fetchCustomers = async () => {
     const request: any = await fetch(
       "https://intense-tor-76305.herokuapp.com/merchants"
     );
     const result = await request.json();
-    setRows(createListData(result));
+    setRows(createListData(result, toggle));
   };
   useEffect(() => {
     fetchCustomers();
@@ -71,7 +77,21 @@ export default function ListCustomers() {
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
                 >
-                  {column.label}
+                  {column.id !== "bidAmount" ? (
+                    column.label
+                  ) : (
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={toggle}
+                          onChange={toggleBidAmount}
+                          name="checkedA"
+                        />
+                      }
+                      labelPlacement="start"
+                      label={toggle ? "Min bid" : "Max bid"}
+                    />
+                  )}
                 </TableCell>
               ))}
             </TableRow>
@@ -80,18 +100,15 @@ export default function ListCustomers() {
             {rows.length > 0 &&
               rows
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
+                .map((row: any) => {
                   return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={new Date().getTime()}
-                    >
+                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                       {columns.map((column) => {
                         const value =
                           column.id === "bidAmount"
-                            ? row["maxBid"]
+                            ? toggle
+                              ? row["minBid"]
+                              : row["maxBid"]
                             : row[column.id];
                         return (
                           <TableCell key={column.id} align={column.align}>
@@ -106,7 +123,7 @@ export default function ListCustomers() {
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
+        rowsPerPageOptions={[10]}
         component="div"
         count={rows.length}
         rowsPerPage={rowsPerPage}
