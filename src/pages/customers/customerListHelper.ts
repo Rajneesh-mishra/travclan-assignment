@@ -6,6 +6,7 @@ export const createListData = (data: any, sortingField: boolean) => {
     let maxBid: number = 0;
     customer.name = `${customer.firstname} ${customer.lastname}`;
     customer.bids?.forEach((bid: any) => {
+      bid.amount = bid.amount?bid.amount:0  //bid amount has some corrupted values this line will prevent invalid data process
       if (minBid > bid.amount) {
         minBid = bid.amount;
       }

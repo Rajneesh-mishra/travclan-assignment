@@ -129,9 +129,15 @@ const ListCustomers: React.FC<Props> = ({ history }) => {
                         const value =
                           column.id === "bidAmount" ? (
                             toggle ? (
-                              row["minBid"]
-                            ) : (
+                              row["minBid"] ? (
+                                row["minBid"]
+                              ) : (
+                                "No bids"
+                              )
+                            ) : row["maxBid"] ? (
                               row["maxBid"]
+                            ) : (
+                              "No bids"
                             )
                           ) : column.id !== "name" ? (
                             row[column.id]
